@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { ThumbsUp, ThumbsDown } from "lucide-react";
 
 const Post = () => {
 
@@ -6,6 +7,8 @@ const Post = () => {
     const [posts, setPosts] = useState([])
     const [editMode, setEditMode] = useState(false)
     const [editedId, setEditedId] = useState(null)
+    const [likes, setLikes] = useState(0)
+    const [dislikes, setDislikes] = useState(0)
 
     const fetchPosts = async () => {
         try {
@@ -147,10 +150,31 @@ const Post = () => {
                         <p className="text-gray-800">{post.content}</p>
                         <p className="text-sm text-gray-500 mt-2">Posted by: {post.postBy.email} </p>
                         <button onClick={() => startUpdating(post)}
-                            className=" bg-indigo-600 text-white p-2 mt-2 mr-2 rounded-xl text-lg font-semibold shadow-lg hover:bg-indigo-700 transition-all duration-200">update</button>
+                            className=" bg-indigo-600 text-white p-2 mt-2 mr-2 rounded-xl text-lg font-semibold shadow-lg hover:bg-indigo-700 transition-all duration-200">update
+                        </button>
 
                         <button onClick={() => handleDelete(post._id)}
-                            className=" bg-indigo-600 text-white p-2 rounded-xl text-lg font-semibold shadow-lg hover:bg-indigo-700 transition-all duration-200">delete</button>
+                            className=" bg-indigo-600 text-white p-2 rounded-xl text-lg font-semibold shadow-lg hover:bg-indigo-700 transition-all duration-200">
+                            delete
+                        </button>
+
+                        {/* Like */}
+                        <button className=" bg-indigo-600 text-white p-2 border-2 border-black rounded-xl text-lg font-semibold shadow-lg hover:bg-indigo-700 transition-all duration-200"
+                            onClick={() => setLikes(likes + 1)}
+                            
+                        >
+                           <div className = "flex gap-2"> <ThumbsUp size={18} />
+                            <span className = "-mt-1">{likes}</span></div>
+                        </button>
+
+                        {/* Dislike */}
+                        <button className=" bg-indigo-600 text-white p-2 rounded-xl text-lg font-semibold shadow-lg hover:bg-indigo-700 transition-all duration-200"
+                            onClick={() => setDislikes(dislikes + 1)}   
+                        >
+                            <ThumbsDown size={18} />
+                            <span>{dislikes}</span>
+                        </button>
+
                     </div>
                 ))}
             </div>
