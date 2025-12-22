@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { ThumbsUp, ThumbsDown } from "lucide-react";
+import { ThumbsUp, MessageCircle } from "lucide-react";
 
 const Post = () => {
 
@@ -7,8 +7,6 @@ const Post = () => {
     const [posts, setPosts] = useState([])
     const [editMode, setEditMode] = useState(false)
     const [editedId, setEditedId] = useState(null)
-    const [likes, setLikes] = useState(0)
-    const [dislikes, setDislikes] = useState(0)
 
     const fetchPosts = async () => {
         try {
@@ -17,6 +15,7 @@ const Post = () => {
                 credentials: "include"
             })
             const data = await res.json()
+            
             setPosts(data.posts.reverse())
         }
         catch (err) {
@@ -77,6 +76,30 @@ const Post = () => {
             console.log("error in deleting the post", error)
         }
 
+    }
+
+    const handleLikes = async (postId) => {
+        try {
+            const res = await fetch("http://localhost:3000/api/like/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "include",
+                body: JSON.stringify({
+                    postId
+                })
+            }
+        )
+        await fetchPosts()
+
+        } catch (error) {
+            console.error('error while fetching the likes', error)
+        }
+    }
+
+    const handleComments = async () => {
+        
     }
 
     const submitHandler = async (e) => {
@@ -149,31 +172,40 @@ const Post = () => {
                     <div key={post._id} className="bg-white shadow-md w-full rounded-lg p-4 mb-4">
                         <p className="text-gray-800">{post.content}</p>
                         <p className="text-sm text-gray-500 mt-2">Posted by: {post.postBy.email} </p>
-                        <button onClick={() => startUpdating(post)}
-                            className=" bg-indigo-600 text-white p-2 mt-2 mr-2 rounded-xl text-lg font-semibold shadow-lg hover:bg-indigo-700 transition-all duration-200">update
-                        </button>
 
-                        <button onClick={() => handleDelete(post._id)}
-                            className=" bg-indigo-600 text-white p-2 rounded-xl text-lg font-semibold shadow-lg hover:bg-indigo-700 transition-all duration-200">
-                            delete
-                        </button>
+                        <div className="flex py-2 gap-2">
+                            {/* update button */}
 
-                        {/* Like */}
-                        <button className=" bg-indigo-600 text-white p-2 border-2 border-black rounded-xl text-lg font-semibold shadow-lg hover:bg-indigo-700 transition-all duration-200"
-                            onClick={() => setLikes(likes + 1)}
-                            
-                        >
-                           <div className = "flex gap-2"> <ThumbsUp size={18} />
-                            <span className = "-mt-1">{likes}</span></div>
-                        </button>
+                            <button onClick={() => startUpdating(post)}
+                                className=" bg-indigo-600 text-white p-2 rounded-xl text-lg font-semibold shadow-lg hover:bg-indigo-700 transition-all duration-200">update
+                            </button>
 
-                        {/* Dislike */}
-                        <button className=" bg-indigo-600 text-white p-2 rounded-xl text-lg font-semibold shadow-lg hover:bg-indigo-700 transition-all duration-200"
-                            onClick={() => setDislikes(dislikes + 1)}   
-                        >
-                            <ThumbsDown size={18} />
-                            <span>{dislikes}</span>
-                        </button>
+                            {/* Delete button */}
+                            <button onClick={() => handleDelete(post._id)}
+                                className=" bg-indigo-600 text-white p-2 rounded-xl text-lg font-semibold shadow-lg hover:bg-indigo-700 transition-all duration-200">
+                                delete
+                            </button>
+
+                            {/* Like */}
+                            <button className=" bg-indigo-600 text-white p-2 rounded-xl  shadow-lg hover:bg-indigo-700 transition-all duration-200"
+                                onClick={() => handleLikes(post._id)}
+
+                            >
+                                <div className="flex gap-2 p-1">
+                                    <ThumbsUp size={18} />
+                                    <span className="-mt-1">{post.likes.length}</span></div>
+                            </button>
+
+                            {/* Comments */}
+                            <button className=" bg-indigo-600 text-white p-2 rounded-xl shadow-lg hover:bg-indigo-700 transition-all duration-200"
+                                onClick={() => handleComments(post._id)}
+                            >
+                                <div className="flex gap-2 p-1">
+                                    <MessageCircle size={18} />
+                                    <span className="-mt-1">{}</span>
+                                </div>
+                            </button>
+                        </div>
 
                     </div>
                 ))}
