@@ -98,8 +98,22 @@ const Post = () => {
         }
     }
 
-    const handleComments = async () => {
-        
+    const handleComments = async (postId) => {
+        try {
+            const res = await fetch("http://localhost:3000/api/comment/",{
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "include",
+                body: JSON.stringify({
+                    postId,
+                    content: "This is a comment"
+                })
+            })
+        } catch (error) {
+            
+        }
     }
 
     const submitHandler = async (e) => {
