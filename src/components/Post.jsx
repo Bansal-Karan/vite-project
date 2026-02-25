@@ -7,6 +7,9 @@ const Post = () => {
     const [posts, setPosts] = useState([])
     const [editMode, setEditMode] = useState(false)
     const [editedId, setEditedId] = useState(null)
+    const [comment, setComment] = useState("")
+    const [showCommentBox, setShowCommentBox] = useState(null)
+    // const [comments, setComments] = useState([])
 
     const fetchPosts = async () => {
         try {
@@ -15,11 +18,25 @@ const Post = () => {
                 credentials: "include"
             })
             const data = await res.json()
-            
+
             setPosts(data.posts.reverse())
         }
         catch (err) {
             console.log("Error in fetchPosts", err);
+        }
+    }
+    const fetchComments = async () => {
+        try {
+            const res = await fetch("http://localhost:3000/api/comment/all", {
+                method: "GET",
+                credentials: "include"
+            })
+            const data = await res.json()
+
+            setComments(data.comments.reverse())
+        }
+        catch (err) {
+            console.log("Error while fetching comments", err);
         }
     }
 
@@ -90,8 +107,8 @@ const Post = () => {
                     postId
                 })
             }
-        )
-        await fetchPosts()
+            )
+            await fetchPosts()
 
         } catch (error) {
             console.error('error while fetching the likes', error)
@@ -100,7 +117,7 @@ const Post = () => {
 
     const handleComments = async (postId) => {
         try {
-            const res = await fetch("http://localhost:3000/api/comment/",{
+            const res = await fetch("http://localhost:3000/api/comment/", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -108,11 +125,15 @@ const Post = () => {
                 credentials: "include",
                 body: JSON.stringify({
                     postId,
-                    content: "This is a comment"
+                    content: comment
                 })
             })
+            setComment("")
+            setShowCommentBox(null)
+            // await fetchComments()
+            await fetchPosts()
         } catch (error) {
-            
+            console.error("error while fetching the comments", error)
         }
     }
 
@@ -131,6 +152,7 @@ const Post = () => {
             })
 
             setContent("")
+
             await fetchPosts()
 
         } catch (error) {
@@ -141,9 +163,8 @@ const Post = () => {
     }
 
     useEffect(() => {
-
-
         fetchPosts()
+        fetchComments()
     }, [])
 
     return (
@@ -211,14 +232,46 @@ const Post = () => {
                             </button>
 
                             {/* Comments */}
-                            <button className=" bg-indigo-600 text-white p-2 rounded-xl shadow-lg hover:bg-indigo-700 transition-all duration-200"
-                                onClick={() => handleComments(post._id)}
+                            <button
+                                className="bg-indigo-600 text-white p-2 rounded-xl shadow-lg hover:bg-indigo-700 transition-all duration-200"
+                                onClick={() =>
+                                    setShowCommentBox(showCommentBox === post._id ? null : post._id)
+                                }
                             >
                                 <div className="flex gap-2 p-1">
                                     <MessageCircle size={18} />
-                                    <span className="-mt-1">{}</span>
+                                    <span className="-mt-1">Comment</span>
                                 </div>
                             </button>
+
+                        </div>
+                        <div>
+                            {showCommentBox === post._id && (
+                                <div className="mt-3 flex gap-2">
+                                    <input
+                                        type="text"
+                                        placeholder="Write a comment..."
+                                        value={comment}
+                                        onChange={(e) => setComment(e.target.value)}
+                                        className="flex-1 p-2 text-black border border-b-black rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    />
+
+                                    <button
+                                        onClick={() => handleComments(post._id)}
+                                        className="bg-green-600 text-white px-4 rounded-lg hover:bg-green-700"
+                                    >
+                                        Send
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                        <div>
+                            {post.comments.map((comment) => (
+                                <div key={comment._id} className="mt-3 p-2 bg-gray-100 rounded-lg">
+                                    <p>{comment.text}</p>
+                                    <p>Commented by: {comment.user.email}</p>
+                                </div>
+                            ))}
                         </div>
 
                     </div>
