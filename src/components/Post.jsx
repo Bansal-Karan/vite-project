@@ -268,8 +268,8 @@ const Post = () => {
                         <div>
                             {post.comments && post.comments.map((comment) => (
                                 <div key={comment._id} className="mt-3 p-2 text-black bg-gray-100 rounded-lg">
-                                    <p className="text-gray-600">{comment.text}</p>
-                                    
+                                    <p >{comment.text}</p>
+                                    <p className="text-gray-500">Commented by: {comment.user?.email.split("@")[0] || 'Unknown'}</p>
                                 </div>
                             ))}
                         </div>
