@@ -25,20 +25,20 @@ const Post = () => {
             console.log("Error in fetchPosts", err);
         }
     }
-    const fetchComments = async () => {
-        try {
-            const res = await fetch("http://localhost:3000/api/comment/all", {
-                method: "GET",
-                credentials: "include"
-            })
-            const data = await res.json()
+    // const fetchComments = async () => {
+    //     try {
+    //         const res = await fetch("http://localhost:3000/api/comment/all", {
+    //             method: "GET",
+    //             credentials: "include"
+    //         })
+    //         const data = await res.json()
 
-            setComments(data.comments.reverse())
-        }
-        catch (err) {
-            console.log("Error while fetching comments", err);
-        }
-    }
+    //         setComments(data.comments.reverse())
+    //     }
+    //     catch (err) {
+    //         console.log("Error while fetching comments", err);
+    //     }
+    // }
 
     const startUpdating = (post) => {
         setContent(post.content)
@@ -164,7 +164,7 @@ const Post = () => {
 
     useEffect(() => {
         fetchPosts()
-        fetchComments()
+        // fetchComments()
     }, [])
 
     return (
@@ -260,16 +260,16 @@ const Post = () => {
                                         onClick={() => handleComments(post._id)}
                                         className="bg-green-600 text-white px-4 rounded-lg hover:bg-green-700"
                                     >
-                                        Send
+                                        post
                                     </button>
                                 </div>
                             )}
                         </div>
                         <div>
-                            {post.comments.map((comment) => (
-                                <div key={comment._id} className="mt-3 p-2 bg-gray-100 rounded-lg">
-                                    <p>{comment.text}</p>
-                                    <p>Commented by: {comment.user.email}</p>
+                            {post.comments && post.comments.map((comment) => (
+                                <div key={comment._id} className="mt-3 p-2 text-black bg-gray-100 rounded-lg">
+                                    <p className="text-gray-600">{comment.text}</p>
+                                    
                                 </div>
                             ))}
                         </div>
