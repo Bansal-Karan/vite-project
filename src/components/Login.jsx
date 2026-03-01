@@ -3,8 +3,10 @@ import { useNavigate } from "react-router-dom"
 
 
 const Login = () => {
+  
   const [email, setEmail] = React.useState("")
   const [password, setPassword] = React.useState("")
+  const navigate = useNavigate()
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -21,6 +23,8 @@ const Login = () => {
         credentials: "include"
       })
       const result = await res.json()
+      if(res.ok) navigate('/post')
+      else alert(result.message)
       console.log(result)
     }
     catch (err) {
